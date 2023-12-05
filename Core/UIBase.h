@@ -36,14 +36,17 @@ namespace UILib
 
 		void SetIcon(UINT nRes);
 
-		static LRESULT CALLBACK __WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-		static LRESULT CALLBACK __ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 
 	protected:
 		virtual UINT GetClassStyle() const;
 		virtual LPCTSTR GetWindowClassName() const = 0;
 		virtual LPCTSTR GetSuperClassName() const;
 
+		virtual void OnFinalMessage(HWND hWnd);
+
+		static LRESULT CALLBACK __WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK __ControlProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	protected:
 		HWND m_hWnd;
 		WNDPROC m_OldWndProc; //窗口超类的窗口过程

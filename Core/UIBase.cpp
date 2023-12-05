@@ -149,7 +149,44 @@ namespace UILib
 
 	LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-
+		CWindowWnd* pThis = NULL;
+		if (uMsg == WM_NCCREATE)
+		{
+			CREATESTRUCTW* lpcs = reinterpret_cast<CREATESTRUCTW*>(lParam);
+			pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
+			pThis->m_hWnd = hWnd;//TODO:???”–∫Œ”√
+			::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>pThis);
+		}
+		else
+		{
+			pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA);
+			if (uMsg == WM_NCDESTROY && pThis != NULL)
+			{
+				LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
+				::SetWindowLongPtr(hWnd, GWLP_USERDATA, 0L);
+				if (pThis->m_bSubclassed)
+					pThis->UnSubclass();
+				pThis->m_hWnd = NULL;
+				pThis->OnFinalMessage(hWnd);
+				return lRes;
+			}
+		}
+		if (pThis != NULL)
+		{
+			return pThis->HandleMessage(uMsg, wParam, lParam);
+		}
+		else
+		{
+			return ::DefWindowProc(hwnd, uMsg, wParam, lParam);
+		}
 	}
 
+	LRESULT CWindowWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		return ::CallWindowProc(m_OldWndProc, m_hWnd, uMsg, wParam, lParam);
+	}
+
+	void CWindowWnd::OnFinalMessage(HWND hWnd)
+	{
+	}
 }
